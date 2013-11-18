@@ -27,3 +27,8 @@ You need OS 10.2.0 as minimum OS.
 Perhaps it gives you an idea HowTo deal better with large screens while waiting for Cascades supporting them.
 
 ![alt tag](https://raw.github.com/ekke/cascades_lists_on_hdmi/master/documentation/icon.png)
+
+ekke blogs at http://ekkes-corner.org
+
+there's a blog entry on this sample app: [TBD]
+and a Thread in native Forums: [TBD]
