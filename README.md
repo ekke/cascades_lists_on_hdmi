@@ -30,5 +30,8 @@ Perhaps it gives you an idea HowTo deal better with large screens while waiting 
 
 ekke blogs at http://ekkes-corner.org - follow ekke at Twitter @ekkesconer
 
-there's a blog entry on this sample app: [TBD]
-and a Thread in native Forums: [TBD]
+there's a blog entry on this sample app: http://appbus.wordpress.com/2013/11/18/mobile-computing-scale-lists-for-2nd-screen-hdmi/ 
+and a Thread in native Forums:
+http://supportforums.blackberry.com/t5/Native-Development/HowTo-scale-ListViews-for-external-Screens-HDMI/m-p/2675185#M53372
+
+Have Fun !
