@@ -23,58 +23,90 @@
 #include <bb/data/JsonDataAccess>
 
 static QString dataAssetsPath(const QString& fileName) {
-	return QDir::currentPath() + "/app/native/assets/data/"
-			+ fileName;
+	return QDir::currentPath() + "/app/native/assets/data/" + fileName;
 }
 
 using namespace bb::cascades;
 using namespace bb::data;
 
 ApplicationUI::ApplicationUI(bb::cascades::Application *app) :
-        QObject(app)
-{
-    // prepare the localization
-    m_pTranslator = new QTranslator(this);
-    m_pLocaleHandler = new LocaleHandler(this);
+		QObject(app) {
+	// prepare the localization
+	m_pTranslator = new QTranslator(this);
+	m_pLocaleHandler = new LocaleHandler(this);
 
-    bool res = QObject::connect(m_pLocaleHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
-    // This is only available in Debug builds
-    Q_ASSERT(res);
-    // Since the variable is not used in the app, this is added to avoid a
-    // compiler warning
-    Q_UNUSED(res);
+	bool res = QObject::connect(m_pLocaleHandler,
+			SIGNAL(systemLanguageChanged()), this,
+			SLOT(onSystemLanguageChanged()));
+	// This is only available in Debug builds
+	Q_ASSERT(res);
+	// Since the variable is not used in the app, this is added to avoid a
+	// compiler warning
+	Q_UNUSED(res);
 
-    // initial load
-    onSystemLanguageChanged();
+	// initial load
+	onSystemLanguageChanged();
 
-    // Create scene document from main.qml asset, the parent is set
-    // to ensure the document gets destroyed properly at shut down.
-    QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
+	// monitor attached 2nd screens
+	int secondaryDisplayId = bb::device::DisplayInfo::secondaryDisplayId();
+	qDebug() << "secondary display Id is " << secondaryDisplayId;
+	mSecondaryDisplayInfo = new bb::device::DisplayInfo(secondaryDisplayId,
+			this);
 
-    qml->setContextProperty("app", this);
+	// to be notified when the attached state changes.
+	bool ok = QObject::connect(mSecondaryDisplayInfo,
+			SIGNAL(attachedChanged(bool)), this,
+			SLOT(secondaryDisplayAttachedChanged(bool)));
+	if (!ok) {
+		qWarning() << "Cannot Monitor 2nd Screens ! connect failed";
+	}
+	// Create scene document from main.qml asset, the parent is set
+	// to ensure the document gets destroyed properly at shut down.
+	QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
 
-    // Create root object for the UI
-    AbstractPane *root = qml->createRootObject<AbstractPane>();
+	qml->setContextProperty("app", this);
 
-    // Set created root object as the application scene
-    app->setScene(root);
+	// Create root object for the UI
+	AbstractPane *root = qml->createRootObject<AbstractPane>();
+
+	// Set created root object as the application scene
+	app->setScene(root);
 }
 
-void ApplicationUI::onSystemLanguageChanged()
-{
-    QCoreApplication::instance()->removeTranslator(m_pTranslator);
-    // Initiate, load and install the application translation files.
-    QString locale_string = QLocale().name();
-    QString file_name = QString("cascades_lists_on_hdmi_%1").arg(locale_string);
-    if (m_pTranslator->load(file_name, "app/native/qm")) {
-        QCoreApplication::instance()->installTranslator(m_pTranslator);
-    }
+void ApplicationUI::onSystemLanguageChanged() {
+	QCoreApplication::instance()->removeTranslator(m_pTranslator);
+	// Initiate, load and install the application translation files.
+	QString locale_string = QLocale().name();
+	QString file_name = QString("cascades_lists_on_hdmi_%1").arg(locale_string);
+	if (m_pTranslator->load(file_name, "app/native/qm")) {
+		QCoreApplication::instance()->installTranslator(m_pTranslator);
+	}
 }
 
-QVariantList ApplicationUI::itemsList(){
+QVariantList ApplicationUI::itemsList() {
 	QVariantList dataList;
 	JsonDataAccess jda;
 	dataList = jda.load(dataAssetsPath("scores.json")).toList();
 
 	return dataList;
+}
+
+void ApplicationUI::secondaryDisplayAttachedChanged(bool connected) {
+	qDebug() << "2nd Screen connected: " << connected;
+	emit secondScreenAttached(connected);
+}
+
+bool ApplicationUI::hasSecondScreenAttached() {
+	// The display parameters are interesting if a physical display is attached.
+	if (mSecondaryDisplayInfo->isAttached()) {
+		qDebug() << "secondary display name is "
+				<< mSecondaryDisplayInfo->displayName();
+		qDebug() << "secondary display size is "
+				<< mSecondaryDisplayInfo->pixelSize().width() << ", "
+				<< mSecondaryDisplayInfo->pixelSize().height();
+		// since 10.2.0:
+		qDebug() << "2nd Screen connected wireless ? "
+				<< mSecondaryDisplayInfo->isWireless();
+	}
+	return mSecondaryDisplayInfo->isAttached();
 }

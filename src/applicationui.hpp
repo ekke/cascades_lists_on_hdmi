@@ -17,6 +17,7 @@
 #define ApplicationUI_HPP_
 
 #include <QObject>
+#include <bb/device/DisplayInfo>
 
 namespace bb
 {
@@ -44,12 +45,20 @@ public:
     Q_INVOKABLE
     QVariantList itemsList();
 
+    Q_INVOKABLE
+    bool hasSecondScreenAttached();
+
     virtual ~ApplicationUI() { }
+signals:
+	void secondScreenAttached(bool connected);
+public slots:
+	void secondaryDisplayAttachedChanged(bool connected);
 private slots:
     void onSystemLanguageChanged();
 private:
     QTranslator* m_pTranslator;
     bb::cascades::LocaleHandler* m_pLocaleHandler;
+    bb::device::DisplayInfo* mSecondaryDisplayInfo;
 };
 
 #endif /* ApplicationUI_HPP_ */

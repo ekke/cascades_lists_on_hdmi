@@ -1,11 +1,11 @@
 /* Copyright (c) 2013 Ekkehard Gentz (ekke)
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  */
 import bb.cascades 1.2
 NavigationPane {
-    property ScaleSliderPage scaleSliderPage : null
+    property ScaleSliderPage scaleSliderPage: null
     // 2nd screen
     property variant scaleFactor: 2.0 / 3.0 // 1280 --> 1920
     property bool use2ndScreen: false
@@ -111,11 +111,23 @@ NavigationPane {
             id: outerContainer
             attachedObjects: [
                 LayoutUpdateHandler {
+                    property bool firstRun: true
                     id: listViewLayoutHandler
                     onLayoutFrameChanged: {
                         console.log("onLayoutFrameChanged:")
                         console.log("LIST LAYOUT w: " + layoutFrame.width + " h: " + layoutFrame.height)
                         console.log("LIST LAYOUT x: " + layoutFrame.x + " y: " + layoutFrame.y)
+                        if (firstRun){
+                            firstRun = false
+                            if (app.hasSecondScreenAttached()) {
+                                use2ndScreen = true
+                                // support only Landscape orientation
+                                OrientationSupport.supportedDisplayOrientation = SupportedDisplayOrientation.DisplayLandscape;
+                            } else {
+                                // support all orientations
+                                OrientationSupport.supportedDisplayOrientation = SupportedDisplayOrientation.All;
+                            }
+                        }
                         if (use2ndScreen) {
                             if (layoutFrame.width <= layoutFrame.height) {
                                 // PORTRAIT or SQUARE
@@ -181,14 +193,30 @@ NavigationPane {
         }
     }
     onPopTransitionEnded: {
-    	scaleFactor = scaleSliderPage.scaling
+        scaleFactor = scaleSliderPage.scaling
         scaleSliderPage.destroy()
     }
+    // getting the signal from APP that a 2nd screen is attached or detached
+    function onSecondScreenAttached(connected) {
+        if (connected) {
+            use2ndScreen = true
+            // support only Landscape orientation
+            OrientationSupport.supportedDisplayOrientation = SupportedDisplayOrientation.DisplayLandscape;
+        } else {
+            use2ndScreen = false
+            // support all orientations
+            OrientationSupport.supportedDisplayOrientation = SupportedDisplayOrientation.All;
+        }
+    }
     onCreationCompleted: {
+        // connect to signal if 2nd screen is connected
+        app.secondScreenAttached.connect(onSecondScreenAttached)
+        // get the data
         scoresDataModel.insertList(app.itemsList())
         // Attention
         // we cannot ask listViewLayoutHandler about frame sizes
         // always 0 here
         // we have to wait for the first event from onLayoutFrameChanged
+        // before scaling or test if 2md screen attached
     }
 }
