@@ -12,7 +12,17 @@ Scaling alone doesn't help, because now the smaller View is centered with some b
 
 Resizing and repositioning helps: enhance the minWidth and minHeight and 'move' the view to top left corner.
 
-This sample works best on Z30, well on Z10, but not for square devices like Q5 or Q10
+Here's a ListView displayed on a Z30 Device Screen:
+
+![alt tag](https://raw.github.com/ekke/cascades_lists_on_hdmi/master/documentation/IMG_00000006.png)
+
+...and here's the same ListView scaled for a big screen:
+
+![alt tag](https://raw.github.com/ekke/cascades_lists_on_hdmi/master/documentation/IMG_00000005.png)
+
+The APP works best on Z30, Z10, but not for square devices like Q5 or Q10
+
+You need OS 10.2.0 as minimum OS.
 
 Perhaps it gives you an idea HowTo deal better with large screens while waiting for Cascades supporting them.
 
