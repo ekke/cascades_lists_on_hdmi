@@ -179,10 +179,10 @@ NavigationPane {
         if (scaled) {
             listView.scaleX = scaleFactor
             listView.scaleY = scaleFactor
-            listView.minWidth = listViewLayoutHandler.layoutFrame.width * extendFactor //1920
-            listView.minHeight = listViewLayoutHandler.layoutFrame.height * extendFactor // 1080 - 260
-            listView.translationX = (listView.minWidth - listViewLayoutHandler.layoutFrame.width) / -2 // -320
-            listView.translationY = (listView.minHeight - listViewLayoutHandler.layoutFrame.height) / -2 // -136 // 180
+            listView.minWidth = listViewLayoutHandler.layoutFrame.width * extendFactor
+            listView.minHeight = listViewLayoutHandler.layoutFrame.height * extendFactor
+            listView.translationX = (listView.minWidth - listViewLayoutHandler.layoutFrame.width) / -2
+            listView.translationY = (listView.minHeight - listViewLayoutHandler.layoutFrame.height) / -2
         } else {
             listView.scaleX = 1
             listView.scaleY = 1

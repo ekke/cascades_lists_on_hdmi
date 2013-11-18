@@ -28,7 +28,7 @@ Perhaps it gives you an idea HowTo deal better with large screens while waiting 
 
 ![alt tag](https://raw.github.com/ekke/cascades_lists_on_hdmi/master/documentation/icon.png)
 
-ekke blogs at http://ekkes-corner.org
+ekke blogs at http://ekkes-corner.org - follow ekke at Twitter @ekkesconer
 
 there's a blog entry on this sample app: [TBD]
 and a Thread in native Forums: [TBD]
